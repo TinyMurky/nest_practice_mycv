@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,8 @@ async function bootstrap() {
       whitelist: true, // Info: (20240928 - Murky) Json Post進來的時候， 不再dto規定的內容會先被過濾掉
     }),
   );
+
+  app.use(cookieParser());
 
   await app.listen(3000);
 }

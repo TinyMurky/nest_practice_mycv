@@ -67,7 +67,7 @@ export class AuthService {
       );
     }
 
-    return user;
+    return userCreated;
   }
 
   public async signIn({

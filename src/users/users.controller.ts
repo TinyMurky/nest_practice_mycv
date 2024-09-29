@@ -9,15 +9,18 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '@/users/dtos/create-user.dto';
 import { UsersService } from '@/users/users.service';
 import { UpdateUserDto } from '@/users/dtos/update-user.dto';
-import { Serialize } from '@/inteceptors/serialize.interceptor';
+import { Serialize } from '@/interceptors/serialize.interceptor';
 import { UserDto } from '@/users/dtos/user.dto';
 import { AuthService } from '@/users/auth.service';
+import { SetCookieInterceptor } from '@/interceptors/set-cookies.interceptor';
+import { ClearCookies } from '@/interceptors/clear-cookies.interceptor';
+import { Cookies } from '@/decorators/get-cookies.decorator';
 
-@Serialize(UserDto)
 @Controller('auth')
 export class UsersController {
   constructor(
@@ -25,6 +28,8 @@ export class UsersController {
     private _authService: AuthService,
   ) {}
 
+  @UseInterceptors(SetCookieInterceptor)
+  @Serialize(UserDto)
   @Post('/signup')
   public signUp(@Body() body: CreateUserDto) {
     return this._authService.signUp({
@@ -33,12 +38,31 @@ export class UsersController {
     });
   }
 
+  @UseInterceptors(SetCookieInterceptor)
+  @Serialize(UserDto)
   @Post('/signin')
   public signIn(@Body() body: CreateUserDto) {
     return this._authService.signIn({
       email: body.email,
       password: body.password,
     });
+  }
+
+  @ClearCookies(['id', 'email'])
+  @Post('/signout')
+  public signOut() {}
+
+  @Get('/whoami')
+  public async whoAmI(
+    @Cookies('id') id: string,
+    @Cookies('email') email: string,
+  ) {
+    const cookieStuff = {
+      id,
+      email,
+    };
+
+    return cookieStuff;
   }
 
   // @UseInterceptors(ClassSerializerInterceptor)
@@ -59,11 +83,13 @@ export class UsersController {
     return user;
   }
 
+  @Serialize(UserDto)
   @Get()
   public find(@Query('email') email: string) {
     return this._userService.findByEmail(email);
   }
 
+  @Serialize(UserDto)
   @Patch('/:id')
   public update(@Body() body: UpdateUserDto, @Param('id') id: string) {
     const userId = parseInt(id);
@@ -71,6 +97,7 @@ export class UsersController {
     return this._userService.update(userId, body);
   }
 
+  @Serialize(UserDto)
   @Delete('/:id')
   public remove(@Param('id') id: string) {
     const userId = parseInt(id);
