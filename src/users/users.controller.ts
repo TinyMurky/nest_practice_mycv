@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '@/users/dtos/create-user.dto';
@@ -19,7 +20,10 @@ import { UserDto } from '@/users/dtos/user.dto';
 import { AuthService } from '@/users/auth.service';
 import { SetCookieInterceptor } from '@/interceptors/set-cookies.interceptor';
 import { ClearCookies } from '@/interceptors/clear-cookies.interceptor';
-import { Cookies } from '@/decorators/get-cookies.decorator';
+// import { CurrentUserInterceptor } from '@/users/interceptors/current-user.interceptor';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from '@/users/users.entity';
+import { AuthGuard } from '@/guards/auth.guard';
 
 @Controller('auth')
 export class UsersController {
@@ -52,17 +56,16 @@ export class UsersController {
   @Post('/signout')
   public signOut() {}
 
+  // @UseInterceptors(CurrentUserInterceptor)
+  @UseGuards(AuthGuard)
+  @Serialize(UserDto)
   @Get('/whoami')
   public async whoAmI(
-    @Cookies('id') id: string,
-    @Cookies('email') email: string,
+    // @Cookies('id') id: string,
+    // @Cookies('email') email: string,
+    @CurrentUser() user: User,
   ) {
-    const cookieStuff = {
-      id,
-      email,
-    };
-
-    return cookieStuff;
+    return user;
   }
 
   // @UseInterceptors(ClassSerializerInterceptor)
