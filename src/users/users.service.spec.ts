@@ -14,6 +14,12 @@ import { NotFoundException } from '@nestjs/common';
 describe('UsersService', () => {
   let service: UsersService;
   let repoMock: MockType<Repository<User>>;
+  // Info: (20241005 - Murky) Mock function
+  const mockUser = {
+    id: 1,
+    email: 'test@test.com',
+    password: 'test',
+  } as User;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,13 +34,6 @@ describe('UsersService', () => {
 
     service = module.get<UsersService>(UsersService);
     repoMock = module.get(getRepositoryToken(User));
-
-    // Info: (20241005 - Murky) Mock function
-    const mockUser = {
-      id: 1,
-      email: 'test@test.com',
-      password: 'test',
-    } as User;
 
     repoMock.create.mockReturnValue(mockUser);
     repoMock.save.mockReturnValue(mockUser);
@@ -92,6 +91,35 @@ describe('UsersService', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    it('should return user');
+    it('should return user if update success', async () => {
+      service.findOneById = () => Promise.resolve(mockUser);
+
+      const user = await service.update(mockUser.id, {
+        email: 'testUpdate',
+      });
+
+      // Info: (20241006 - Murky) _repo.save已經被mock成會直接回傳丟進去的值
+      expect(user).toEqual({
+        ...mockUser,
+        email: 'testUpdate',
+      });
+
+      expect(repoMock.save).toHaveBeenCalledWith(user);
+    });
+  });
+
+  describe('remove', () => {
+    it('should throw error if user not found', async () => {
+      service.findOneById = () => Promise.resolve(null);
+
+      await expect(service.remove(1)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should remove and return user', async () => {
+      service.findOneById = () => Promise.resolve(mockUser);
+      const user = await service.remove(1);
+      expect(user).toBeDefined();
+      expect(repoMock.remove).toHaveBeenCalled();
+    });
   });
 });
