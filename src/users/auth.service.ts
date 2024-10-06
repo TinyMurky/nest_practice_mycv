@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
-import { UsersService } from './users.service';
+import { UsersService } from '@/users/users.service';
 @Injectable()
 export class AuthService {
   private _hashBufferLength: number = 32;
@@ -44,6 +44,7 @@ export class AuthService {
     // Info: (20240929 - Murky) Find if email is used
     const [user] = await this._usersService.findByEmail(email);
     if (user) {
+      console.log('User!!!', user);
       throw new ConflictException(`Email ${email} already Used`);
     }
 
