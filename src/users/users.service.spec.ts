@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '@/users/users.service';
 import { MockType, repositoryMockFactory } from '@/libs/mock_repo';
 import { Repository } from 'typeorm';
-import { User } from './users.entity';
+import { User } from '@/users/users.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 /**
