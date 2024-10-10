@@ -32,8 +32,8 @@ export class UsersController {
     private _authService: AuthService,
   ) {}
 
-  @UseInterceptors(SetCookieInterceptor)
   @Serialize(UserDto)
+  @UseInterceptors(SetCookieInterceptor)
   @Post('/signup')
   public signUp(@Body() body: CreateUserDto) {
     return this._authService.signUp({
@@ -42,8 +42,8 @@ export class UsersController {
     });
   }
 
-  @UseInterceptors(SetCookieInterceptor)
   @Serialize(UserDto)
+  @UseInterceptors(SetCookieInterceptor)
   @Post('/signin')
   public signIn(@Body() body: CreateUserDto) {
     return this._authService.signIn({

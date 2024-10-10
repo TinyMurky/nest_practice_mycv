@@ -10,7 +10,7 @@ import {
 export class CreateReportDto {
   @IsNumber()
   @Min(0)
-  @Max(10 ^ 8)
+  @Max(10 ** 8)
   price: number;
 
   @IsString()
@@ -27,7 +27,7 @@ export class CreateReportDto {
 
   @IsNumber()
   @Min(0)
-  @Max(10 ^ 8)
+  @Max(10 ** 8)
   mileage: number; // how many miles has this car been driven
 
   @IsNumber()

@@ -16,6 +16,7 @@ describe('UsersController', () => {
   } as User;
 
   beforeEach(async () => {
+    // Fake要寫在 Test.createTestingModule
     fakeAuthService = {
       // 可以用MockImplement, 也可以簡寫成mockResolveValue
       // 不一定要用jest.fn()mock, 也可以直接是Promise.resolve(mockUser)
