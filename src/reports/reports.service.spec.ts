@@ -7,6 +7,7 @@ import { ReportsService } from '@/reports/reports.service';
 import { Report } from '@/reports/reports.entity';
 import { User } from '@/users/users.entity';
 import { CreateReportDto } from './dtos/create-report.dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ReportsService', () => {
   let service: ReportsService;
@@ -37,6 +38,7 @@ describe('ReportsService', () => {
     lng: 4.637797,
     year: 1993,
     mileage: 10000,
+    approved: false,
     user: mockUser,
   };
 
@@ -72,6 +74,29 @@ describe('ReportsService', () => {
 
       // Report need to associate with user
       expect(report.user).toBeDefined();
+    });
+  });
+
+  describe('"Approve", admin user approved report', () => {
+    it('should throw NotFoundException when id not found in report', async () => {
+      repoMock.findOneBy = jest.fn().mockResolvedValue(null);
+
+      await expect(service.approve).rejects.toThrow(NotFoundException);
+    });
+
+    it('should use save and update approved approve', () => {
+      const mockReportWithTrueApprove = {
+        ...mockReport,
+        approve: true,
+      };
+
+      repoMock.save = jest.fn().mockReturnValue(mockReportWithTrueApprove);
+
+      expect(repoMock.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          approved: true,
+        }),
+      );
     });
   });
 });

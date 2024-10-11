@@ -30,6 +30,9 @@ export class Report {
   @Column()
   year: number;
 
+  @Column({ default: false })
+  approved: boolean;
+
   // 由於Report和user會循環report，為了解決這個點才使用 () => User
   // 這樣可以確保先load report 和 User 之後，用Function直接回一個User Entity告訴Report 應該要去關聯誰
   @ManyToOne(() => User, (user) => user.reports)

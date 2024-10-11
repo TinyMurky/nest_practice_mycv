@@ -54,4 +54,8 @@ describe('ReportController (e2e', () => {
       expect(report.user).toBeUndefined();
     });
   });
+
+  describe('E2E => Report route => Patch(/id) => change approve ', () => {
+    it('should return 401 unauthorized if patch by normal user', () => {});
+  });
 });

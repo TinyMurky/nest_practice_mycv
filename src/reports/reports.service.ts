@@ -33,7 +33,5 @@ export class ReportsService {
     return this._repo.save(report);
   }
 
-  public findOneById() {}
-
-  public find() {}
+  public approve() {}
 }

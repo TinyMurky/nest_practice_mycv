@@ -1,9 +1,7 @@
 import {
   Body,
   Controller,
-  Get,
   NotFoundException,
-  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -40,16 +38,5 @@ export class ReportsController {
       createReportDto,
       user,
     });
-  }
-
-  @Get()
-  find() {
-    return this._reportsService.find();
-  }
-
-  @Get('/:id')
-  findById(@Param() id: number) {
-    console.log(id);
-    return this._reportsService.findOneById();
   }
 }
