@@ -2,6 +2,9 @@ import {
   Body,
   Controller,
   NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +15,9 @@ import { User } from '@/users/users.entity';
 import { CreateReportDto } from '@/reports/dtos/create-report.dto';
 import { Serialize } from '@/interceptors/serialize.interceptor';
 import { ReportDto } from '@/reports/dtos/report.dto';
+import { ApproveReportDto } from './dtos/approve-report.dto';
+import { CheckRoleAuth } from '@/guards/role.guard';
+import { Role } from '@/constants/enum/user';
 
 @Controller('/reports')
 export class ReportsController {
@@ -38,5 +44,23 @@ export class ReportsController {
       createReportDto,
       user,
     });
+  }
+
+  @UseGuards(AuthGuard)
+  @CheckRoleAuth([Role.Admin])
+  @Serialize(ReportDto)
+  @Patch('/:id')
+  /**
+   * Need to be admin to add or remove approval
+   * @param id - {string} id of report from Param
+   * @param approveReport - {ApproveReportDto} have is approve
+   */
+  public changeApproval(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() approveReportDto: ApproveReportDto,
+  ) {
+    const { isApproved } = approveReportDto;
+
+    return this._reportsService.changeApproval(id, isApproved);
   }
 }

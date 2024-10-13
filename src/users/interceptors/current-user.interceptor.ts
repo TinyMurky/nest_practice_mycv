@@ -7,6 +7,23 @@ import {
 import { UsersService } from '@/users/users.service';
 import { Observable } from 'rxjs';
 
+/**
+ * The sequence of middleware, guard, interceptor is:
+ * Request
+ *   |
+ * Middlewares
+ *   |
+ * Guards
+ *   |
+ *   | <--------------------|
+ *   |                      |
+ *  Request Handler    Interceptor
+ *   |                      |
+ *   | <--------------------|
+ *   |
+ *  Response
+ */
+
 @Injectable()
 export class CurrentUserInterceptor implements NestInterceptor {
   constructor(private _userService: UsersService) {}

@@ -3,6 +3,9 @@ import { Expose, Transform } from 'class-transformer';
 
 export class ReportDto {
   @Expose()
+  id: number;
+
+  @Expose()
   price: number;
 
   @Expose()
@@ -22,6 +25,9 @@ export class ReportDto {
 
   @Expose()
   year: number;
+
+  @Expose()
+  approved: boolean;
 
   // @Transform(({ value, key, obj, type }) => value)
   // value	-The property value before the transformation.

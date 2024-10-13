@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { Report } from '@/reports/reports.entity';
+import { Role } from '@/constants/enum/user';
 
 console.log('Report in user Entity:', Report); // print: [class Report]
 
@@ -27,7 +28,9 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({
+    default: Role.Admin,
+  })
   role: string;
 
   @OneToMany(() => Report, (report) => report.user)

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -33,5 +33,32 @@ export class ReportsService {
     return this._repo.save(report);
   }
 
-  public approve() {}
+  /**
+   * Change 'approved state'  of certain id
+   * @param id - id of report that will be change
+   * @param isApproved - boolean state of 'report'
+   * @returns
+   */
+  public async changeApproval(id: number, isApproved: boolean) {
+    /**
+     * Report that will be change state
+     * @description hi!
+     */
+    // const report = await this._repo.findOneBy({
+    //   id: id,
+    // });
+    const report = await this._repo.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['user'], // 這樣子save的回傳才會有user
+    });
+
+    if (!report) {
+      throw new NotFoundException(`Report id: ${id} not found`);
+    }
+
+    report.approved = isApproved;
+    return this._repo.save(report);
+  }
 }

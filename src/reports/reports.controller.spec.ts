@@ -37,13 +37,13 @@ describe('ReportsController', () => {
     year: 1993,
     mileage: 10000,
     user: mockUser,
+    approved: false,
   };
 
   beforeEach(async () => {
     fakeReportService = {
       create: jest.fn().mockResolvedValue(mockReport),
-      find: jest.fn().mockResolvedValue([mockReport]),
-      findOneById: jest.fn().mockResolvedValue(mockReport),
+      changeApproval: jest.fn().mockResolvedValue(mockReport),
     };
 
     const module: TestingModule = await Test.createTestingModule({
