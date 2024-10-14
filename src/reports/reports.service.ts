@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Report } from '@/reports/reports.entity';
 import { CreateReportDto } from '@/reports/dtos/create-report.dto';
 import { User } from '@/users/users.entity';
+import { GetEstimateReport } from '@/reports/dtos/get-estimate-report.dto';
 
 @Injectable()
 export class ReportsService {
@@ -60,5 +61,32 @@ export class ReportsService {
 
     report.approved = isApproved;
     return this._repo.save(report);
+  }
+
+  public getEstimateReport({
+    make,
+    model,
+    lng,
+    lat,
+    mileage,
+    year,
+  }: GetEstimateReport) {
+    // Where 和and where 裡的 :xxx 的xxx全部只能出現一次，
+    const prices = this._repo
+      .createQueryBuilder()
+      .select('AVG(price)', 'price') // 是 AVG(price)' AS price的意思
+      // .from(Report, 'report')
+      .where('make LIKE :reportMake', { reportMake: `%${make}%` })
+      .andWhere('model LIKE :reportModel', { reportModel: `%${model}%` }) // %不能放在query裡
+      .andWhere('ABS(lng - :reportLng) <= 5', { reportLng: lng })
+      .andWhere('ABS(lat - :reportLat) <= 5', { reportLat: lat })
+      .andWhere('ABS(year - :reportYear) <= 5', { reportYear: year })
+      .orderBy('ABS(mileage - :reportMileage)', 'DESC') // orderBy如果要另外用特殊直去sort
+      .setParameters({
+        reportMileage: mileage,
+      })
+      .limit(3)
+      .getRawOne();
+    return prices;
   }
 }

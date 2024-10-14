@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ReportsService } from '@/reports/reports.service';
@@ -18,6 +20,7 @@ import { ReportDto } from '@/reports/dtos/report.dto';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { CheckRoleAuth } from '@/guards/role.guard';
 import { Role } from '@/constants/enum/user';
+import { GetEstimateReport } from '@/reports/dtos/get-estimate-report.dto';
 
 @Controller('/reports')
 export class ReportsController {
@@ -62,5 +65,10 @@ export class ReportsController {
     const { isApproved } = approveReportDto;
 
     return this._reportsService.changeApproval(id, isApproved);
+  }
+
+  @Get()
+  public getEstimateReport(@Query() getEstimateDto: GetEstimateReport) {
+    return this._reportsService.getEstimateReport(getEstimateDto);
   }
 }
