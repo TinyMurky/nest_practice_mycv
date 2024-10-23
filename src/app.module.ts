@@ -14,6 +14,8 @@ import { ReportsModule } from '@/reports/reports.module';
 // import { Report } from '@/reports/reports.entity';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DataSourceOptions } from 'typeorm';
+import typeorm from '@/config/typeorm';
 // {
 //       type: 'sqlite',
 //       database: './database/db.sqlite',
@@ -22,11 +24,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 //     }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const dbConfig = require('../ormconfig.js');
+// const dbConfig = require('../ormconfig.js');
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [typeorm],
       envFilePath: `.env.${process.env.NODE_ENV}.local`,
     }),
     UsersModule,
@@ -46,7 +49,13 @@ const dbConfig = require('../ormconfig.js');
           },
         }),
      */
-    TypeOrmModule.forRoot(dbConfig), // 手動傳入config
+    // TypeOrmModule.forRoot(dbConfig), // 手動傳入config <= 如果要用ormconfig.js
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      // typeorm config 在 'config/typeorm.ts' 裡面
+      useFactory: (configService: ConfigService) =>
+        configService.get<DataSourceOptions>('typeorm'),
+    }),
   ],
   controllers: [AppController],
   providers: [

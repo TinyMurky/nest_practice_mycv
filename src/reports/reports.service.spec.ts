@@ -79,7 +79,7 @@ describe('ReportsService', () => {
 
   describe('"changeApproval", admin user approved report', () => {
     it('should throw NotFoundException when id not found in report', async () => {
-      repoMock.findOneBy = jest.fn().mockResolvedValue(null);
+      repoMock.findOne = jest.fn().mockResolvedValue(null);
 
       await expect(service.changeApproval(mockReport.id, true)).rejects.toThrow(
         NotFoundException,
@@ -92,7 +92,7 @@ describe('ReportsService', () => {
         approve: true,
       };
 
-      repoMock.findOneBy = jest.fn().mockReturnValue(mockReport);
+      repoMock.findOne = jest.fn().mockReturnValue(mockReport);
       repoMock.save = jest.fn().mockReturnValue(mockReportWithTrueApprove);
 
       const updatedReport = await service.changeApproval(mockReport.id, true);

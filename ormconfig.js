@@ -1,7 +1,8 @@
+// don't use this, use datasource in database instead
+/* eslint-disable @typescript-eslint/no-var-requires */
 /*
  * 這個檔案用來取代app.module.ts中的TypeOrmModule.forRootAsync()
  */
-// // eslint-disable-next-line @typescript-eslint/no-var-requires
 const dotenv = require('dotenv');
 
 const envPath = `.env.${process.env.NODE_ENV || 'development'}.local`;
